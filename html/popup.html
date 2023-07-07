@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie-Master</title>
+    <script src="../script/vue3.js"></script>
+    <link rel="stylesheet" href="../style/popup.css">
+</head>
+<body>
+    <div id="app">
+        <div class="operation" v-show="!isAdding">
+            <a class="help" href="https://rshagor.com/#contacts-e" target="_blank" rel="noopener noreferrer">
+                <img title="Need Help?" src="../asset/help.svg" />
+            </a>
+            <button title="Copy all cookies" @click="onCopy"><img src="../asset/copy.svg" />Copy</button>
+            <button title="Copy with flat data structure" @click="onFlatCopy"><img src="../asset/copy.svg" />Blast copy</button>
+            <button title="Clear all cookies" @click="onClear"><img src="../asset/delete.svg" />Clear</button>
+            <button title="Import cookies in current root domain which in standard structure" @click="onImport"><img src="../asset/import.svg" />Import</button>
+            <button title="create a new cookie in current domain" @click="isAdding = true"><img src="../asset/add.svg" />Add</button>
+        </div>
+        <div v-show="!isAdding" class="cookie">
+            <div class="cookie-item">
+                <div>Name</div>
+                <div>Value</div>
+                <div>Domain</div>
+                <div class="cookie-item-http">Http Only</div>
+                <div class="cookie-item-secure">Secure</div>
+            </div>
+            <transition-group  v-if="cookieList.length" name="list">
+                <div class="cookie-item" v-for="(el, i) in cookieList" :key="`${el.name}${el.value}`">
+                    <div :title="el.name">{{ el.name }}</div>
+                    <div :title="el.value">{{ el.value }}</div>
+                    <div>{{ el.domain }}</div>
+                    <div class="cookie-item-http">
+                        <img @click="toggleHttpOnly(i)" v-show="el.httpOnly" src="../asset/check.svg" alt="">
+                        <img @click="toggleHttpOnly(i)" v-show="!el.httpOnly" src="../asset/uncheck.svg" alt="">
+                    </div>
+                    <div class="cookie-item-secure">
+                        <img @click="toggleSecure(i)" v-show="el.secure" src="../asset/check.svg" alt="">
+                        <img @click="toggleSecure(i)" v-show="!el.secure" src="../asset/uncheck.svg" alt="">
+                    </div>
+                    <section class="cookie-item-delete">
+                        <img src="../asset/copy.svg" title="copy this cookie" @click="onSingleCopy(i)" />
+                        <img src="../asset/delete.svg" title="delete this cookie" @click="onDelete(i)" />
+                    </section>
+                </div>
+            </transition-group>
+            <img v-else class="empty-img" src="../asset/empty.svg" alt="" />
+        </div>
+        <div v-show="isAdding" class="add-box">
+            <div class="add-item">
+                <label>Name</label>
+                <input v-model="addingCookie.name" ref="cookieNameRef" type="text">
+            </div>
+            <div class="add-item">
+                <label>Value</label>
+                <input v-model="addingCookie.value" type="text">
+            </div>
+            <div class="footer">
+                <button @click="isAdding = false">Cancel</button>
+                <button :disabled="!canAddingCookieSubmit" class="positive" @click="onAdd">Ok</button>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="../script/popup.js"></script>
+</body>
+</html>
